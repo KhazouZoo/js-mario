@@ -31,29 +31,47 @@
 			
 			// Variable de Jeu
 				game.play = 1;
-				game.speed = 10; // Image/Sec
-				game.level = 0;
-				game.session = 0;
+				game.speed = 10; 	// Image/Sec
+				game.level = 3; 	// Niveau de difficulté du 'path'
+				
+				// Initialisation du 'path'
+					game.path = {};
+					game.path.type = "";
+					game.path.position = "";
 		},
 		start: function(){
 			i = 0;
-			var run = setInterval( function(){
+			game.run = setInterval( function(){
 				graph.clearAll();
-				
+					
 					// Génération de Mario
 					graph.generate(texture.mario[i%4],16,27,texture.mario.x,texture.mario.y);
 					
-					// Choix d'une 'session'
-				
-					// Génération du 'path'
-					for(var l = 0; l < path.type[game.level][game.session].length; l++){
-						graph.generate(texture.obstacle[path.type[game.level][game.session][l]],16,28,texture.obstacle.x[i],path.y[game.level][game.session][l]);
+					// Ajout de nouvelle session au 'path' s'il est trop petit
+					while(game.path.type.length < 64){ // 36 -> nombre minimum de case nécessaire pour remplir l'écran
+						// Choisir une nouvelle session à ajouter au path de manière aléatoire
+						var rand = Math.floor(Math.random() * (path.type[game.level].length));
+							game.path.type += path.type[game.level][rand];
+							game.path.position += path.position[game.level][rand];
 					}
 					
-					// Déplacement du 'path'
-					
+					var loop = 0;
+					while(loop < 64){
+						var pos = (game.path.position[loop] * 27) + 40;
+						graph.generate(texture.obstacle[game.path.type[loop]],16,28,1000 - loop * 16,pos);
+						loop++;
+					}
+				
+				game.path.type = game.path.type.substr(1,game.path.type.length);
+				game.path.position = game.path.position.substr(1,game.path.type.length);
 				i++;
+				
+				if(texture.mario.y >= ((game.path.position[0] * 27) + 40)) game.stop();
 			},1000/game.speed);
+		},
+		stop: function(){
+			clearInterval(game.run);
+			console.log("Game Over !!");
 		}
 	};
 	
@@ -106,25 +124,16 @@
 	// Différent 'path' possible
 	var path = {
 		type : {
-			0: [
-				"0000000000000000"
-			],
-			1: [
-				"0000000000000000000",
-				"0000000000000000000"
-			]
+			1: [ "0000000000000000" ],
+			2: [ "000000000000000011000000" ],
+			3: [ "000011000000000011000000" , "00001100" ]
 		},
-		y : {
-			0 : [
-				"4444444444444444"
-			],
-			1 : [
-				"4565655566554566654",
-				"5555555555555555555"
-			]
+		position : {
+			1: [ "5555555555555555" ],
+			2: [ "444444445555555599444444" ],
+			3: [ "555599554444444499333333" , "55559955"]
 		}
 	}
-		
 	
 	game.init();
 	game.start();

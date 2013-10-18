@@ -1,16 +1,6 @@
 ﻿/*
-	CHANGELOG:
-		11/09:
-			- Fonction d'initialisation et rendu graphique commencée
-			- Pixelisation de Mario et d'une brique
-			- Ajout du déplacement du 'path'
-			
-			- Abandon de la génération aléatoire de la route pour des 'sessions', plus simple à gérer et plus sûr
-	
 	TODO:
-		- Ajouter la 'gravité'
-		- Gérer la position du 'path'
-	
+		- Gérer la position de Mario
 */
 ( function(){
 	var game = {
